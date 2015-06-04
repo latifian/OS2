@@ -279,13 +279,13 @@ static int steal_thresh = 2;
 
 // my definition code
 
-int (*tslice)(struct thread*);
+int (*get_tslice)(struct thread*);
 void (*my_thread_timeout)(struct thread*);
 struct thread* (*mohlat_choose)(void);
 void (*mohlat_throw)(struct thread*);
 
-void set_tslice(int (*func)(struct thread*)) {
-	tslice = func;
+void set_geT_tslice(int (*func)(struct thread*)) {
+	get_tslice = func;
 }
 
 void set_my_thread_timeout(void (*func)(struct thread*)) {
@@ -2316,7 +2316,7 @@ sched_clock(struct thread *td)
 	if (td->ismine == 1 && get_tslice != NULL)
 	{
 		tslice = get_tslice(td);
-		if (tslice == NULL)
+		if (get_tslice == NULL)
 			tslice = tdq_slice(tdq);
 	}
 	else

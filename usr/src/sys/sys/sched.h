@@ -113,7 +113,7 @@ fixpt_t	sched_pctcpu_delta(struct thread *td);
  * my code , definition of functions
  */
 
-void set_tslice(int (*func)(struct thread*));
+void set_get_tslice(int (*func)(struct thread*));
 void set_my_thread_timeout(void (*func)(struct thread*));
 void set_mohlat_choose(struct thread* (*func)(void));
 
