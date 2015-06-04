@@ -35,6 +35,10 @@
 #include <sys/systm.h>
 #include <sys/sched.h>
 
+int get_tslice(struct thread* td);
+struct thread* mohlat_choose(void);
+void my_thread_timeout(struct thread* td);
+
 struct thread* queue1[10000], *queue2[10000], *queue3[10000];
 int start1, end1, start2, end2, start3, end3;
 
