@@ -120,12 +120,12 @@ load(struct module *module, int cmd, void *arg)
 	case MOD_LOAD :
                 start1 = end1 = start2 = end2 = start3 = end3 = 0;
 		printf("syscall loaded at %d\n", offset);
-                //set_get_tslice(&get_tslice);
+                set_get_tslice(&get_tslice);
                 set_my_thread_timeout(&my_thread_timeout);
                 set_mohlat_choose(&mohlat_choose);
 		break;
 	case MOD_UNLOAD :
-                //set_get_tslice(NULL);
+                set_get_tslice(NULL);
                 set_my_thread_timeout(NULL);
                 set_mohlat_choose(NULL);
 		printf("syscall unloaded from %d\n", offset);
