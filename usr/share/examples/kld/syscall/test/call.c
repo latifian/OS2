@@ -47,12 +47,12 @@ main(int argc __unused, char **argv __unused)
 	if (modstat(modid, &stat) != 0)
 		err(1, "modstat");
 	syscall_num = stat.data.intval;
-        
+        int p = fork ();
 	syscall (syscall_num);
         int i = 0;
-        for (i = 0; i < 10000; i++)
+        for (i = 0; i < 1000; i++)
         {
-                printf ("test %d", i);
+                printf ("thread pid = %d, test %d\n", p, i);
                 fflush (stdout);
         }
 }
