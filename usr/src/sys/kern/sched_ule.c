@@ -282,6 +282,7 @@ static int steal_thresh = 2;
 int (*tslice)(struct thread*);
 void (*my_thread_timout)(struct thread*);
 struct thread* (*mohlat_choose)(void);
+void (*mohlat_throw)(struct thread*);
 
 void set_tslice(int (*func)(struct thread*)) {
 	tslice = func;
@@ -294,6 +295,11 @@ void set_my_thread_timeout(void (*func)(struct thread*)) {
 void set_mohlat_choose(struct thread* (*func)(void)) {
 	mohlat_choose = func;
 }
+
+void set_mohlat_throw(void (*func)(struct thread*)) {
+        mohlat_throw = func;
+}
+
 
 // end of my definition code
 
@@ -1351,14 +1357,16 @@ tdq_choose(struct tdq *tdq)
 
 	TDQ_LOCK_ASSERT(tdq, MA_OWNED);
 	td = runq_choose(&tdq->tdq_realtime);
-	if (td != NULL)
+	if (td != NULL && td->ismine != 1)      // edited by mohlat
 		return (td);
 // my code in choose
-	td = mohlat_choose();
-	if (td != NULL)
-		return (td);
+        if (mohlat_choose != NULL) {
+                td = mohlat_choose();
+                if (td != NULL)
+                        return (td);
+        }
 // end of my code
-
+        
 	td = runq_choose_from(&tdq->tdq_timeshare, tdq->tdq_ridx);
 	if (td != NULL) {
 		KASSERT(td->td_priority >= PRI_MIN_BATCH,
@@ -2305,7 +2313,7 @@ sched_clock(struct thread *td)
 	 */
 // my code in clock
 	int tslice;
-	if (td->ismine == 1)
+	if (td->ismine == 1 && get_tslice != NULL)
 	{
 		tslice = get_tslice(td);
 		if (tslice == NULL)
@@ -2314,8 +2322,9 @@ sched_clock(struct thread *td)
 	else
 		tslice = tdq_slice(tdq);
 	if (!TD_IS_IDLETHREAD(td) && ++ts->ts_slice >= tslice) {
-		////////
-		my_thread_timeout(td);
+		// my code scope
+                if (my_thread_timeout != NULL)
+                        my_thread_timeout(td);
 		ts->ts_slice = 0;
 		td->td_flags |= TDF_NEEDRESCHED | TDF_SLICEEND;
 	}
@@ -2737,8 +2746,11 @@ sched_throw(struct thread *td)
 {
 	struct thread *newtd;
 	struct tdq *tdq;
-
-	tdq = TDQ_SELF();
+        // my code
+        if (mohlat_throw != NULL)
+                mohlat_throw(td);
+        // end of my code
+        tdq = TDQ_SELF();
 	if (td == NULL) {
 		/* Correct spinlock nesting and acquire the correct lock. */
 		TDQ_LOCK(tdq);
