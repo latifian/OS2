@@ -1,4 +1,4 @@
- * Copyright (c) 2002-2007, Jeffrey Roberson <jeff@freebsd.org>
+ /* Copyright (c) 2002-2007, Jeffrey Roberson <jeff@freebsd.org>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -22,6 +22,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+//////////////// I LOVE GIT /////////////////
+
 
 /*
  * This file implements the ULE scheduler.  ULE supports independent CPU
