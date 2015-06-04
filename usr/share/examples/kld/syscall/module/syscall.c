@@ -33,6 +33,49 @@
 #include <sys/sysent.h>
 #include <sys/kernel.h>
 #include <sys/systm.h>
+#include <sys/sched.h>
+
+struct thread* queue1[10000], queue2[10000], queue3[10000];
+int start1, end1, start2, end2, start3, end3;
+
+int get_tslice(struct thread* td) {
+        return 1<<(td->qnum);
+}
+void my_thread_timeout(struct thread* td) {
+        if (td->qnum == 1) {
+                td->qnum = 2;
+                queue2[end1++] = td;
+                end1 %= 9999;
+        }
+        else if (td->qnum == 2) {
+                td->qnum = 3;
+                queue3[end2++] = td;
+                end2 %= 9999;
+        } else {
+                td->qnum = 3;
+                queue3[end3++] = td;
+                end3 %= 9999;
+        }
+        
+}
+struct thread* mohlat_choose() {
+        start1 %= 9999;
+        start2 %= 9999;
+        start3 %= 9999;
+        if (start1  != end1) {
+                return queue1[start1++];
+                
+        }
+        if (start2 != end2) {
+                return queue2[start2++];
+        }
+        if (start3 != end3) {
+                return queue3[start3++];
+        }
+        return NULL;
+}
+
+
 
 /*
  * The function for implementing the syscall.
@@ -40,7 +83,10 @@
 static int
 hello(struct thread *td, void *arg)
 {
-
+        td->ismine = 1;
+        td->qnum = 1
+        queue1[end1++]=td;
+        end1 %= 9999;
 	printf("hello kernel\n");
 	return (0);
 }
@@ -68,9 +114,16 @@ load(struct module *module, int cmd, void *arg)
 
 	switch (cmd) {
 	case MOD_LOAD :
+                start1 = end1 = start2 = end2 = start3 = end3 = 0;
 		printf("syscall loaded at %d\n", offset);
+                set_get_tslice(&get_tslice);
+                set_my_thread_timeout(&my_thread_timeout);
+                set_mohlat_choose(&mohlat_choose);
 		break;
 	case MOD_UNLOAD :
+                set_get_tslice(NULL);
+                set_my_thread_timeout(NULL);
+                set_mohlat_choose(NULL);
 		printf("syscall unloaded from %d\n", offset);
 		break;
 	default :

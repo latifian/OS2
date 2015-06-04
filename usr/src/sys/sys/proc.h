@@ -202,9 +202,9 @@ struct rusage_ext {
  * Thread context.  Processes may have multiple threads.
  */
 struct thread {
-	int ismine;                      // my
+	int ismine;                      // my change
 	int qnum;
-        // end of my
+        // end of my change
 	struct mtx	*volatile td_lock; /* replaces sched lock */
 	struct proc	*td_proc;	/* (*) Associated process. */
 	TAILQ_ENTRY(thread) td_plist;	/* (*) All threads in this proc. */
