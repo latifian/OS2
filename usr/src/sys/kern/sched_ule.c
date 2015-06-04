@@ -279,6 +279,11 @@ static int steal_thresh = 2;
 
 // my definition code
 
+void set_get_tslice(int (*func)(struct thread*));
+void set_my_thread_timeout(void (*func)(struct thread*));
+void set_mohlat_choose(struct thread* (*func)(void));
+void set_mohlat_throw(void (*func)(struct thread*));
+
 int (*get_tslice)(struct thread*);
 void (*my_thread_timeout)(struct thread*);
 struct thread* (*mohlat_choose)(void);
