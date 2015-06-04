@@ -35,7 +35,7 @@
 #include <sys/systm.h>
 #include <sys/sched.h>
 
-struct thread* queue1[10000], queue2[10000], queue3[10000];
+struct thread* queue1[10000], *queue2[10000], *queue3[10000];
 int start1, end1, start2, end2, start3, end3;
 
 int get_tslice(struct thread* td) {
@@ -84,7 +84,7 @@ static int
 hello(struct thread *td, void *arg)
 {
         td->ismine = 1;
-        td->qnum = 1
+        td->qnum = 1;
         queue1[end1++]=td;
         end1 %= 9999;
 	printf("hello kernel\n");
