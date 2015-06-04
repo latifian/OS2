@@ -284,7 +284,7 @@ void (*my_thread_timeout)(struct thread*);
 struct thread* (*mohlat_choose)(void);
 void (*mohlat_throw)(struct thread*);
 
-void set_geT_tslice(int (*func)(struct thread*)) {
+void set_get_tslice(int (*func)(struct thread*)) {
 	get_tslice = func;
 }
 
